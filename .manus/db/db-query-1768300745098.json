@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS contact_submissions (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  name VARCHAR(100) NOT NULL,\n  email VARCHAR(320),\n  phone VARCHAR(20),\n  address TEXT,\n  service_type VARCHAR(50),\n  message TEXT NOT NULL,\n  photo_urls JSON,\n  utm_params JSON,\n  traffic_source TEXT,\n  landing_page TEXT,\n  referrer TEXT,\n  status VARCHAR(20) DEFAULT 'new',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JDUzPT6k72Hmh1L.f5a91f03fd9d --database 2z3LJY3tVdXCJ44uBuwMjN --execute CREATE TABLE IF NOT EXISTS contact_submissions (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  name VARCHAR(100) NOT NULL,\n  email VARCHAR(320),\n  phone VARCHAR(20),\n  address TEXT,\n  service_type VARCHAR(50),\n  message TEXT NOT NULL,\n  photo_urls JSON,\n  utm_params JSON,\n  traffic_source TEXT,\n  landing_page TEXT,\n  referrer TEXT,\n  status VARCHAR(20) DEFAULT 'new',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1694
+}

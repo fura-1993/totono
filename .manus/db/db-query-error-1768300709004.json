@@ -1,0 +1,16 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS contact_submissions (\n  id SERIAL PRIMARY KEY,\n  name VARCHAR(100) NOT NULL,\n  email VARCHAR(320),\n  phone VARCHAR(20),\n  address TEXT,\n  service_type VARCHAR(50),\n  message TEXT NOT NULL,\n  photo_urls JSONB,\n  utm_params JSONB,\n  traffic_source TEXT,\n  landing_page TEXT,\n  referrer TEXT,\n  status VARCHAR(20) DEFAULT 'new',\n  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user JDUzPT6k72Hmh1L.f5a91f03fd9d --database 2z3LJY3tVdXCJ44uBuwMjN --execute CREATE TABLE IF NOT EXISTS contact_submissions (\n  id SERIAL PRIMARY KEY,\n  name VARCHAR(100) NOT NULL,\n  email VARCHAR(320),\n  phone VARCHAR(20),\n  address TEXT,\n  service_type VARCHAR(50),\n  message TEXT NOT NULL,\n  photo_urls JSONB,\n  utm_params JSONB,\n  traffic_source TEXT,\n  landing_page TEXT,\n  referrer TEXT,\n  status VARCHAR(20) DEFAULT 'new',\n  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n);",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1064 (42000) at line 1: You have an error in your SQL syntax; check the manual that corresponds to your TiDB version for the right syntax to use line 9 column 19 near \"JSONB,",
+    "  utm_params JSONB,",
+    "  traffic_source TEXT,",
+    "  landing_page TEXT,",
+    "  referrer TEXT,",
+    "  status VARCHAR(20) DEFAULT 'new',",
+    "  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),",
+    "  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()",
+    ")\""
+  ]
+}
