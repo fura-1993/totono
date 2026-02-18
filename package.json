@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --host",
     "dev:reset": "lsof -ti tcp:3000 | xargs -r kill -9; rm -rf node_modules/.vite; vite --host 0.0.0.0 --port 3000 --strictPort",
+    "sync": "git add . && git commit -m \"sync\" || true && git push origin main",
     "generate-sitemap": "node scripts/generate-sitemap.mjs",
     "submit-sitemap": "node scripts/submit-sitemap.mjs",
     "prebuild": "node scripts/generate-sitemap.mjs",

@@ -411,12 +411,14 @@
   position: relative;
   overflow: hidden;
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
-  animation: heroCtaIn 0.45s ease both;
+  --cta-rest-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.45);
+  --cta-pulse-shadow: 0 14px 30px -16px rgba(0, 0, 0, 0.5);
+  animation: heroCtaIn 0.45s ease both, heroCtaBreath 3.8s ease-in-out 1.2s infinite;
   box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.45);
 }
 
 .hero-cta:nth-child(2) {
-  animation-delay: 0.08s;
+  animation-delay: 0.08s, 1.55s;
 }
 
 .hero-cta::after {
@@ -437,6 +439,14 @@
 
 .hero-cta:hover::after {
   transform: translateX(120%);
+}
+
+.hero-cta svg {
+  transition: transform 0.18s ease;
+}
+
+.hero-cta:hover svg {
+  transform: translateX(1px);
 }
 
 .hero-cta-phone {
@@ -463,6 +473,16 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes heroCtaBreath {
+  0%,
+  100% {
+    box-shadow: var(--cta-rest-shadow);
+  }
+  50% {
+    box-shadow: var(--cta-pulse-shadow);
   }
 }
 

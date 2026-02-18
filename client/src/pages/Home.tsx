@@ -396,8 +396,13 @@ export default function Home() {
               },
             ].map((item, i) => (
               <div key={i} className="relative">
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-                  <div className="text-4xl font-black text-coral mb-4">{item.step}</div>
+                <div className="bg-white/12 border border-white/25 backdrop-blur-sm rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-forest font-black text-lg shadow-md ring-2 ring-coral/60">
+                      {item.step}
+                    </div>
+                    <span className="text-xs font-semibold tracking-[0.14em] text-white/80">STEP</span>
+                  </div>
                   <h3 className="font-bold text-xl mb-2">{item.title}</h3>
                   <p className="text-white/80 text-sm leading-relaxed">{item.description}</p>
                 </div>
