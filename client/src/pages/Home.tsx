@@ -113,7 +113,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative pt-20 md:pt-24 overflow-hidden">
+      <section ref={heroRef} className="relative pt-20 md:pt-24 min-h-[100svh] overflow-hidden">
         <div className="absolute inset-0 z-0">
           {/* Hero image - 伐採作業中のスタッフ */}
           <img 
@@ -125,9 +125,9 @@ export default function Home() {
         </div>
         
         <div className="relative z-10 container pt-2 md:pt-4 lg:pt-6 pb-16 md:pb-24 lg:pb-32">
-          <div className="max-w-2xl pt-0 md:pt-2 lg:pt-4 rounded-2xl border border-white/18 bg-black/24 backdrop-blur-[2px] p-4 md:p-6 lg:p-7">
+          <div className="max-w-3xl rounded-2xl border border-white/18 bg-black/24 backdrop-blur-[2px] px-6 py-8 md:px-8 md:py-10 lg:px-9 lg:py-11">
             {/* Badges */}
-            <div className="mt-2 md:mt-3 flex flex-nowrap items-center gap-2 mb-4 animate-fade-in-up">
+            <div className="mt-2 md:mt-3 flex flex-wrap md:flex-nowrap items-center gap-2 mb-4 animate-fade-in-up">
               <span className="hero-meta-badge">
                 <MapPin className="hero-meta-icon" />
                 茨城・栃木・千葉対応
@@ -151,7 +151,7 @@ export default function Home() {
               1本からご依頼OK。写真見積もり・追加料金なしで安心です。
             </p>
 
-            <div className="mt-0 grid grid-cols-3 gap-[clamp(0.35rem,1vw,0.75rem)] mb-5 animate-fade-in-up stagger-2">
+            <div className="mt-0 grid grid-cols-3 gap-[clamp(0.5rem,1.3vw,1rem)] mb-6 animate-fade-in-up stagger-2">
               <div className="hero-service-card">
                 <Scissors className="hero-service-icon text-coral mb-1.5" />
                 <p className="hero-service-title">剪定</p>
