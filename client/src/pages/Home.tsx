@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * トトノLP - 地域密着の造園・伐採・草刈りサービス
  * デザイン: プロフェッショナル・クラフト
@@ -21,7 +23,19 @@ const PHONE = "090-5306-0197";
 const EMAIL = "extend.engineer007@gmail.com";
 const LINE_URL = "https://lin.ee/UNR8hec"; // LINE公式アカウントURL
 
-export default function Home() {
+export type HomeAchievement = {
+  id: number;
+  title: string;
+  description: string;
+  location?: string | null;
+  serviceType?: string | null;
+  workDate?: string | null;
+  duration?: string | null;
+  scope?: string | null;
+  imageUrl?: string | null;
+};
+
+export default function Home({ achievements = [] }: { achievements?: HomeAchievement[] }) {
   const [isFloatingCtaVisible, setIsFloatingCtaVisible] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -153,19 +167,19 @@ export default function Home() {
 
             <div className="mt-6 md:mt-7 grid grid-cols-3 gap-[clamp(0.5rem,1.3vw,1rem)] mb-6 animate-fade-in-up stagger-2">
               <div className="hero-service-card">
-                <Scissors className="hero-service-icon text-coral mb-1.5" />
+                <Scissors className="hero-service-icon text-coral" />
                 <p className="hero-service-title">剪定</p>
-                <p className="hero-service-desc">樹形を整える</p>
+                <p className="hero-service-desc">樹形を整えて見た目と風通しを改善</p>
               </div>
               <div className="hero-service-card">
-                <TreeDeciduous className="hero-service-icon text-coral mb-1.5" />
+                <TreeDeciduous className="hero-service-icon text-coral" />
                 <p className="hero-service-title">伐採</p>
-                <p className="hero-service-desc">危険木も安全作業</p>
+                <p className="hero-service-desc">危険木や不要木を安全に撤去</p>
               </div>
               <div className="hero-service-card">
-                <Leaf className="hero-service-icon text-coral mb-1.5" />
+                <Leaf className="hero-service-icon text-coral" />
                 <p className="hero-service-title">草刈り</p>
-                <p className="hero-service-desc">空き家管理にも対応</p>
+                <p className="hero-service-desc">空き地や庭の草をすっきり管理</p>
               </div>
             </div>
             
@@ -218,6 +232,40 @@ export default function Home() {
           </svg>
         </div>
       </section>
+
+      {achievements.length > 0 && (
+        <section className="py-12 md:py-20 bg-muted">
+          <div className="container">
+            <div className="reveal text-center mb-10">
+              <span className="badge bg-forest/10 text-forest mb-4">最新の施工実績</span>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                管理画面から更新された実績
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6 reveal">
+              {achievements.map((item) => (
+                <Card key={item.id} className="overflow-hidden border-0 shadow-md">
+                  {item.imageUrl ? (
+                    <div className="aspect-video">
+                      <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
+                    </div>
+                  ) : null}
+                  <CardContent className="p-6">
+                    <h3 className="font-bold text-lg text-foreground mb-2">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-3">{item.description}</p>
+                    <div className="flex flex-wrap items-center gap-3 text-sm">
+                      {item.location ? <span className="text-muted-foreground">{item.location}</span> : null}
+                      {item.duration ? <span className="text-muted-foreground">作業時間: {item.duration}</span> : null}
+                      {item.scope ? <span className="text-muted-foreground">規模: {item.scope}</span> : null}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Service Area Section */}
       <section className="py-12 md:py-16 bg-background">
@@ -274,39 +322,42 @@ export default function Home() {
       {/* Problems Section */}
       <section className="py-12 md:py-20 bg-muted">
         <div className="container">
-          <div className="reveal text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-              こんなお悩みありませんか？
-            </h2>
-          </div>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 reveal">
-            {[
-              "庭木が伸びすぎて、ご近所に迷惑をかけていないか心配",
-              "空き家の庭が荒れ放題で、どこに頼めばいいかわからない",
-              "業者に頼むと高そう…追加料金が怖い",
-              "自分で草刈りするのは体力的にキツくなってきた",
-              "山林の木が倒れそうで危険だけど、対応してくれる業者が見つからない",
-              "見積もりを取りたいけど、立ち会う時間がない",
-              "以前頼んだ業者の仕上がりがイマイチだった",
-            ].map((problem, i) => (
-              <div key={i} className="flex items-start gap-3 bg-white rounded-xl p-4 shadow-sm">
-                <div className="w-6 h-6 bg-coral/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <AlertTriangle className="w-4 h-4 text-coral" />
-                </div>
-                <p className="text-sm text-foreground">{problem}</p>
+          <div className="problem-board reveal">
+            <div className="problem-board-head">
+              <h2 className="problem-board-title">こんな悩み、ありませんか？</h2>
+              <p className="problem-board-sub">放置すると、見た目だけでなく安全面やご近所への配慮にも不安が出てきます。</p>
+            </div>
+
+            <div className="problem-soil" aria-hidden="true" />
+
+            <div className="problem-cards">
+              {[
+                { text: "庭木が伸びすぎて、ご近所に迷惑をかけていないか心配", slot: "problem-1" },
+                { text: "空き家の庭が荒れ放題で、どこに頼めばいいかわからない", slot: "problem-2" },
+                { text: "業者に頼むと高そう…追加料金が怖い", slot: "problem-3" },
+                { text: "自分で草刈りするのは体力的にキツくなってきた", slot: "problem-4" },
+                { text: "山林の木が倒れそうで危険だけど、対応してくれる業者が見つからない", slot: "problem-5" },
+                { text: "見積もりを取りたいけど、立ち会う時間がない", slot: "problem-6" },
+                { text: "以前頼んだ業者の仕上がりがイマイチだった", slot: "problem-7" },
+              ].map((item, i) => (
+                <article key={i} className="problem-wood-card">
+                  <div className="problem-image-slot" data-slot={item.slot}>
+                    <AlertTriangle className="w-5 h-5" />
+                  </div>
+                  <p className="problem-wood-text">{item.text}</p>
+                </article>
+              ))}
+            </div>
+
+            <div className="problem-arrow" aria-hidden="true" />
+
+            <div className="problem-answer">
+              <p className="problem-answer-title">そのお悩み、トトノが解決します</p>
+              <p className="problem-answer-text">地元密着だからできる、丁寧で誠実な対応をお約束</p>
+              <div className="problem-answer-icons" aria-hidden="true">
+                <MapPin className="w-5 h-5" />
+                <Shield className="w-5 h-5" />
               </div>
-            ))}
-          </div>
-          
-          <div className="reveal mt-10 text-center">
-            <div className="inline-block bg-forest text-white rounded-2xl px-8 py-6">
-              <p className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-[clamp(1.1rem,3.2vw,1.35rem)] font-bold mb-2">
-                そのお悩み、トトノが解決します
-              </p>
-              <p className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-[clamp(0.84rem,2.1vw,0.96rem)] text-white/80">
-                地元密着だからできる、丁寧で誠実な対応をお約束
-              </p>
             </div>
           </div>
         </div>
@@ -468,6 +519,7 @@ export default function Home() {
                 unit: "/ 1㎡",
                 description: "草刈りの手間を大幅削減。長期間雑草を抑制します。",
                 features: ["高耐久シート使用", "砂利敷き対応", "10年保証品あり"],
+                image: "/images/防草シート施工.png",
               },
               {
                 icon: <Sparkles className="w-8 h-8" />,
@@ -476,6 +528,7 @@ export default function Home() {
                 unit: "/ 1㎡",
                 description: "お手入れ不要で年中キレイな緑。お子様やペットにも安心。",
                 features: ["高品質人工芝", "下地処理込み", "10年耐久品"],
+                image: "/images/人工芝施工.png",
               },
               {
                 icon: <HomeIcon className="w-8 h-8" />,
@@ -484,6 +537,7 @@ export default function Home() {
                 unit: "/ 月",
                 description: "遠方にお住まいの方も安心。定期的な見回りと庭の管理。",
                 features: ["月1回〜対応", "写真報告あり", "郵便物確認可"],
+                image: "/images/空き家の定期管理.png",
               },
             ].map((item, i) => (
               <Card key={i} className="card-hover border-0 shadow-md overflow-hidden">
@@ -520,27 +574,52 @@ export default function Home() {
           </div>
           
           {/* Pricing transparency */}
-          <div className="reveal mt-10 bg-secondary/50 rounded-2xl p-6 md:p-8">
-            <h3 className="font-bold text-lg text-foreground mb-4 flex items-center gap-2">
-              <Shield className="w-5 h-5 text-forest" />
-              料金が決まる要素
-            </h3>
-            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="reveal mt-10 factor-panel">
+            <div className="factor-title">料金が決まる要素</div>
+
+            <div className="factor-grid">
               {[
-                { label: "木の高さ・太さ", desc: "高木・大径木は割増" },
-                { label: "作業の難易度", desc: "狭所・傾斜地など" },
-                { label: "処分量", desc: "枝葉・幹の量" },
-                { label: "重機の必要性", desc: "クレーン・ユンボ等" },
+                {
+                  icon: <TreeDeciduous className="w-5 h-5" />,
+                  label: "木の高さ・太さ",
+                  note: "高木・大径木は割増",
+                  image: "/images/木の大きさ高さ.png",
+                },
+                {
+                  icon: <AlertTriangle className="w-5 h-5" />,
+                  label: "作業の難易度",
+                  note: "狭所・傾斜地など",
+                  image: "/images/作業難易度.png",
+                },
+                {
+                  icon: <Leaf className="w-5 h-5" />,
+                  label: "処分量",
+                  note: "枝葉・幹の量",
+                  image: "/images/処分量.png",
+                },
+                {
+                  icon: <Shield className="w-5 h-5" />,
+                  label: "重機の必要性",
+                  note: "クレーン・ユンボ等",
+                  image: "/images/重機の必要性.png",
+                },
               ].map((item, i) => (
-                <div key={i} className="bg-white rounded-xl p-4">
-                  <p className="font-medium text-foreground">{item.label}</p>
-                  <p className="text-sm text-muted-foreground">{item.desc}</p>
+                <div key={i} className="factor-card">
+                  <div className="factor-card-head">
+                    <span className="factor-card-icon">{item.icon}</span>
+                    <span className="factor-card-label">{item.label}</span>
+                  </div>
+                  <div className="factor-card-body">
+                    <img src={item.image} alt={item.label} className="factor-card-image" loading="lazy" />
+                  </div>
                 </div>
               ))}
             </div>
-            <p className="text-sm text-muted-foreground mt-4">
-              ※追加料金が発生する場合は、必ず事前にご説明・ご了承をいただきます
-            </p>
+
+            <div className="factor-warning">
+              <AlertTriangle className="w-5 h-5 text-amber-600" />
+              <p>※追加料金が発生する場合は、必ず事前にご説明・ご了承をいただきます</p>
+            </div>
           </div>
         </div>
       </section>
