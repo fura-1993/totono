@@ -151,7 +151,7 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
   };
 
   return (
-    <div className="min-h-screen bg-background overflow-x-clip">
+    <div className="lp-page min-h-screen bg-background overflow-x-clip">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-foreground focus:shadow-lg"
