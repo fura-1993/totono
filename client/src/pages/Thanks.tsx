@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * サンクスページ - フォーム送信完了後のコンバージョンページ
  * このページへの到達をコンバージョンとして計測可能
@@ -7,7 +9,7 @@
  */
 
 import { useEffect } from "react";
-import { Link } from "wouter";
+import Link from "next/link";
 import { CheckCircle, Phone, MessageCircle, ArrowLeft, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -50,8 +52,7 @@ export default function Thanks() {
       {/* Header */}
       <header className="py-4 bg-white/80 backdrop-blur-sm border-b border-border">
         <div className="container">
-          <Link href="/">
-            <a className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
               <div className="w-10 h-10 bg-forest rounded-lg flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M12 2L2 7l10 5 10-5-10-5z" />
@@ -60,7 +61,6 @@ export default function Thanks() {
                 </svg>
               </div>
               <span className="text-xl font-bold text-charcoal">トトノ</span>
-            </a>
           </Link>
         </div>
       </header>
@@ -138,12 +138,12 @@ export default function Thanks() {
 
             {/* Back to Home */}
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
-              <Link href="/">
-                <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2" asChild>
+                <Link href="/">
                   <Home className="w-4 h-4" />
                   トップページに戻る
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>

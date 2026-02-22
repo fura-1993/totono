@@ -92,7 +92,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-noto-sans-jp), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -348,7 +348,7 @@
 .hero-service-card {
   border-radius: 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.24);
-  background: rgba(11, 14, 17, 0.42);
+  background: rgba(11, 14, 17, 0.82);
   padding: clamp(0.45rem, 1.4vw, 0.75rem);
   color: #fff;
   backdrop-filter: blur(6px);

@@ -1,0 +1,11 @@
+# robots.txt for トトノ LP
+# https://totono-lp.vercel.app/
+
+User-agent: *
+Allow: /
+
+# サンクスページはインデックス不要
+Disallow: /thanks
+
+# サイトマップの場所
+Sitemap: https://totono-lp.vercel.app/sitemap.xml

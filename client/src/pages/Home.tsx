@@ -9,19 +9,42 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { Phone, MessageCircle, Mail, Check, ChevronRight, Clock, MapPin, Shield, Sparkles, TreeDeciduous, Scissors, Leaf, Home as HomeIcon, Building, Mountain, AlertTriangle, Star, ArrowRight, Send, Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { Phone, MessageCircle, Mail, Check, ChevronRight, Clock, MapPin, Shield, Sparkles, TreeDeciduous, Scissors, Leaf, Home as HomeIcon, Building, Mountain, AlertTriangle, Menu, X, type LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ContactForm } from "@/components/ContactForm";
 import { Testimonials } from "@/components/Testimonials";
 import { PriceSimulator } from "@/components/PriceSimulator";
-import { trackPhoneClick, trackLineClick, trackEmailClick, trackScrollDepth } from "@/lib/analytics";
+import { trackPhoneClick, trackLineClick, trackEmailClick } from "@/lib/analytics";
 
 // Contact info
 const PHONE = "090-5306-0197";
 const EMAIL = "extend.engineer007@gmail.com";
 const LINE_URL = "https://lin.ee/UNR8hec"; // LINE公式アカウントURL
+
+type ContactChannelId = "phone" | "line" | "email";
+
+type ContactChannel = {
+  id: ContactChannelId;
+  href: string;
+  icon: LucideIcon;
+  label: string;
+  subLabel: string;
+  floatingLabelDesktop: string;
+  floatingLabelMobile: string;
+  sectionClassName: string;
+  floatingClassName: string;
+};
+
+const GLOBAL_NAV_ITEMS = [
+  { href: "#services", label: "サービス" },
+  { href: "#pricing", label: "料金" },
+  { href: "#cases", label: "施工事例" },
+  { href: "#testimonials", label: "お客様の声" },
+  { href: "#faq", label: "よくある質問" },
+  { href: "#contact", label: "お問い合わせ" },
+];
 
 export type HomeAchievement = {
   id: number;
@@ -39,11 +62,6 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
   const [isFloatingCtaVisible, setIsFloatingCtaVisible] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
-
-  // SEO: ページタイトルの設定（30-60文字）
-  useEffect(() => {
-    document.title = "【茨城・栃木・千葉】庭木の剪定・伐採・草刈りならトトノ｜1本からOK・見積無料";
-  }, []);
 
   // Scroll reveal effect
   useEffect(() => {
@@ -76,8 +94,70 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const comparisonRows = [
+    { item: "見積もり方法", us: "写真でOK / 現地無料", them: "現地のみ（有料の場合も）" },
+    { item: "返信スピード", us: "12時間以内", them: "数日〜1週間" },
+    { item: "最低依頼本数", us: "1本からOK", them: "複数本〜" },
+    { item: "追加料金", us: "事前説明・了承制", them: "作業後に請求されることも" },
+    { item: "近隣への配慮", us: "事前挨拶・養生徹底", them: "業者による" },
+  ];
+
+  const contactChannels: ContactChannel[] = [
+    {
+      id: "phone",
+      href: `tel:${PHONE}`,
+      icon: Phone,
+      label: "電話で無料相談",
+      subLabel: "7:00〜20:00",
+      floatingLabelDesktop: "電話で無料相談",
+      floatingLabelMobile: "電話相談",
+      sectionClassName: "cta-button bg-coral text-white flex flex-col items-center gap-2 py-6",
+      floatingClassName: "flex-1 sm:flex-none cta-button bg-coral text-white text-sm py-3 px-4 flex items-center justify-center gap-2",
+    },
+    {
+      id: "line",
+      href: LINE_URL,
+      icon: MessageCircle,
+      label: "LINEで無料概算",
+      subLabel: "写真を送るだけ",
+      floatingLabelDesktop: "LINEで無料概算",
+      floatingLabelMobile: "LINE概算",
+      sectionClassName: "cta-button bg-[#06C755] text-white flex flex-col items-center gap-2 py-6",
+      floatingClassName: "flex-1 sm:flex-none cta-button bg-[#06C755] text-white text-sm py-3 px-4 flex items-center justify-center gap-2",
+    },
+    {
+      id: "email",
+      href: `mailto:${EMAIL}`,
+      icon: Mail,
+      label: "メールで無料見積もり",
+      subLabel: "24時間受付",
+      floatingLabelDesktop: "メール",
+      floatingLabelMobile: "メール",
+      sectionClassName: "cta-button bg-white text-forest flex flex-col items-center gap-2 py-6",
+      floatingClassName: "hidden sm:flex flex-1 sm:flex-none cta-button bg-forest text-white text-sm py-3 px-4 items-center justify-center gap-2",
+    },
+  ];
+
+  const trackContactClick = (channelId: ContactChannelId, placement: string) => {
+    if (channelId === "phone") {
+      trackPhoneClick(placement);
+      return;
+    }
+    if (channelId === "line") {
+      trackLineClick(placement);
+      return;
+    }
+    trackEmailClick(placement);
+  };
+
   return (
     <div className="min-h-screen bg-background overflow-x-clip">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-foreground focus:shadow-lg"
+      >
+        メインコンテンツへスキップ
+      </a>
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/15 bg-charcoal/55 backdrop-blur-md shadow-[0_8px_24px_-18px_rgba(0,0,0,0.75)]">
         <div className="container flex items-center justify-between h-16">
@@ -90,10 +170,11 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
           
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
-            <a href="#services" className="hero-header-link">サービス</a>
-            <a href="#pricing" className="hero-header-link">料金</a>
-            <a href="#cases" className="hero-header-link">施工事例</a>
-            <a href="#faq" className="hero-header-link">よくある質問</a>
+            {GLOBAL_NAV_ITEMS.map((item) => (
+              <a key={item.href} href={item.href} className="hero-header-link">
+                {item.label}
+              </a>
+            ))}
             <a 
               href={`tel:${PHONE}`} 
               className="hero-header-cta"
@@ -106,8 +187,12 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
           
           {/* Mobile menu button */}
           <button 
+            type="button"
             className="md:hidden p-2 rounded-lg border border-white/20 bg-white/10 text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "メニューを閉じる" : "メニューを開く"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -115,24 +200,37 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
         
         {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-charcoal/80 border-t border-white/15 py-4 backdrop-blur-md">
-            <nav className="container flex flex-col gap-4">
-              <a href="#services" className="text-sm font-medium py-2 text-white/90" onClick={() => setMobileMenuOpen(false)}>サービス</a>
-              <a href="#pricing" className="text-sm font-medium py-2 text-white/90" onClick={() => setMobileMenuOpen(false)}>料金</a>
-              <a href="#cases" className="text-sm font-medium py-2 text-white/90" onClick={() => setMobileMenuOpen(false)}>施工事例</a>
-              <a href="#faq" className="text-sm font-medium py-2 text-white/90" onClick={() => setMobileMenuOpen(false)}>よくある質問</a>
+          <div
+            id="mobile-navigation"
+            className="md:hidden bg-charcoal/80 border-t border-white/15 py-4 backdrop-blur-md"
+          >
+            <nav className="container flex flex-col gap-4" aria-label="モバイルナビゲーション">
+              {GLOBAL_NAV_ITEMS.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="text-sm font-medium py-2 text-white/90"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </a>
+              ))}
             </nav>
           </div>
         )}
       </header>
 
+      <main id="main-content">
       {/* Hero Section */}
       <section ref={heroRef} className="relative pt-20 md:pt-24 min-h-[100svh] overflow-hidden">
         <div className="absolute inset-0 z-0">
           {/* Hero image - 伐採作業中のスタッフ */}
-          <img 
-            src="/images/hero-work.png" 
-            alt="トトノのスタッフ - チェーンソーで伐採作業中" 
+          <Image
+            src="/images/hero-work.png"
+            alt="トトノのスタッフ - チェーンソーで伐採作業中"
+            fill
+            priority
+            sizes="100vw"
             className="w-full h-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-charcoal/68 via-charcoal/42 to-transparent" />
@@ -157,12 +255,12 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
               <span className="inline-flex items-center rounded-md border border-white/24 bg-black/30 px-2.5 py-1 text-[#f3dcc7] [text-shadow:0_2px_10px_rgba(0,0,0,0.35)]">
                 剪定・伐採・草刈り
               </span>
-              <span className="block mt-1">地域密着専門サービス</span>
+              <span className="block mt-1">写真で無料概算、12時間以内に返信</span>
             </h1>
             
             <p className="text-[clamp(0.84rem,2.25vw,1.1rem)] leading-relaxed text-white/95 mb-4 animate-fade-in-up stagger-2">
               茨城・栃木・千葉で、庭木の剪定・伐採・草刈りに専門対応。<br className="hidden md:block" />
-              1本からご依頼OK。写真見積もり・追加料金なしで安心です。
+              1本からご依頼OK。追加作業は必ず事前説明のうえご判断いただきます。
             </p>
 
             <div className="mt-6 md:mt-7 grid grid-cols-3 gap-[clamp(0.5rem,1.3vw,1rem)] mb-6 animate-fade-in-up stagger-2">
@@ -187,15 +285,15 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
             <div className="hero-trust-row mb-6 animate-fade-in-up stagger-3">
               <div className="hero-trust-item">
                 <Check className="hero-trust-icon" />
-                <span className="hero-trust-text">見積無料</span>
+                <span className="hero-trust-text">見積書で内訳提示</span>
               </div>
               <div className="hero-trust-item">
                 <Check className="hero-trust-icon" />
-                <span className="hero-trust-text">写真見積OK</span>
+                <span className="hero-trust-text">12時間以内返信</span>
               </div>
               <div className="hero-trust-item">
                 <Check className="hero-trust-icon" />
-                <span className="hero-trust-text">1本からOK</span>
+                <span className="hero-trust-text">追加は事前了承制</span>
               </div>
             </div>
             
@@ -207,7 +305,7 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                 onClick={() => trackPhoneClick('hero')}
               >
                 <Phone className="w-5 h-5" />
-                <span>今すぐ電話で相談</span>
+                <span>電話で無料相談する</span>
               </a>
               <a 
                 href={LINE_URL} 
@@ -215,7 +313,7 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                 onClick={() => trackLineClick('hero')}
               >
                 <MessageCircle className="w-5 h-5" />
-                <span>LINEで写真を送る</span>
+                <span>LINEで無料概算を受け取る</span>
               </a>
             </div>
             
@@ -233,6 +331,9 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
         </div>
       </section>
 
+      {/* Quick Price Simulator (first view immediately below) */}
+      <PriceSimulator compact sectionId="pricing" />
+
       {achievements.length > 0 && (
         <section className="py-12 md:py-20 bg-muted">
           <div className="container">
@@ -248,7 +349,13 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                 <Card key={item.id} className="overflow-hidden border-0 shadow-md">
                   {item.imageUrl ? (
                     <div className="aspect-video">
-                      <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
+                      <img
+                        src={item.imageUrl}
+                        alt={item.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   ) : null}
                   <CardContent className="p-6">
@@ -479,7 +586,7 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
               サービス・料金のご案内
             </h2>
             <p className="text-muted-foreground">
-              ※料金は目安です。現地の状況により変動します
+              ※料金は目安です。木の高さ・処分量・作業環境により変動します
             </p>
           </div>
           
@@ -491,6 +598,7 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                 price: "3,000円〜",
                 unit: "/ 1本",
                 description: "松・槙・庭木全般の本格剪定。樹形を整え、美しいお庭に。",
+                example: "例: 高さ2〜3mの庭木1本（枝葉処分込み）",
                 features: ["低木〜高木まで対応", "枝葉の処分込み", "年間管理もOK"],
                 image: "/images/service-sentei.png",
               },
@@ -500,15 +608,17 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                 price: "5,000円〜",
                 unit: "/ 1本",
                 description: "邪魔な木、危険な木を安全に伐採。山林の間伐も対応。",
+                example: "例: 高さ2m程度の伐採1本（重機なし）",
                 features: ["重機使用可能", "処分費込み", "山林・竹林OK"],
                 image: "/images/service-batsuboku.png",
               },
               {
                 icon: <Leaf className="w-8 h-8" />,
                 title: "草刈り・草抜き",
-                price: "500円〜",
+                price: "50円〜",
                 unit: "/ 1㎡",
                 description: "伸び放題の雑草をスッキリ。定期的な管理もお任せください。",
+                example: "例: 30㎡の機械草刈り（最低料金500円〜）",
                 features: ["機械刈り・手作業", "除草剤散布可", "定期契約割引あり"],
                 image: "/images/service-kusakari.png",
               },
@@ -518,6 +628,7 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                 price: "1,500円〜",
                 unit: "/ 1㎡",
                 description: "草刈りの手間を大幅削減。長期間雑草を抑制します。",
+                example: "例: 20㎡の施工（下地調整込み）",
                 features: ["高耐久シート使用", "砂利敷き対応", "10年保証品あり"],
                 image: "/images/防草シート施工.png",
               },
@@ -527,6 +638,7 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                 price: "8,000円〜",
                 unit: "/ 1㎡",
                 description: "お手入れ不要で年中キレイな緑。お子様やペットにも安心。",
+                example: "例: 15㎡の施工（下地処理込み）",
                 features: ["高品質人工芝", "下地処理込み", "10年耐久品"],
                 image: "/images/人工芝施工.png",
               },
@@ -536,14 +648,22 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                 price: "5,000円〜",
                 unit: "/ 月",
                 description: "遠方にお住まいの方も安心。定期的な見回りと庭の管理。",
+                example: "例: 月1回の巡回＋写真報告",
                 features: ["月1回〜対応", "写真報告あり", "郵便物確認可"],
                 image: "/images/空き家の定期管理.png",
               },
             ].map((item, i) => (
               <Card key={i} className="card-hover border-0 shadow-md overflow-hidden">
                 {item.image && (
-                  <div className="h-40 overflow-hidden">
-                    <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                  <div className="relative h-40 overflow-hidden">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      quality={72}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 )}
                 <CardContent className="p-6">
@@ -560,6 +680,7 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                     <span className="text-sm text-muted-foreground">{item.unit}</span>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">{item.description}</p>
+                  <p className="text-xs text-foreground/80 bg-muted rounded-lg px-3 py-2 mb-4">{item.example}</p>
                   <ul className="space-y-2">
                     {item.features.map((feature, j) => (
                       <li key={j} className="flex items-center gap-2 text-sm">
@@ -610,7 +731,15 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                     <span className="factor-card-label">{item.label}</span>
                   </div>
                   <div className="factor-card-body">
-                    <img src={item.image} alt={item.label} className="factor-card-image" loading="lazy" />
+                    <Image
+                      src={item.image}
+                      alt={item.label}
+                      width={360}
+                      height={240}
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      quality={72}
+                      className="factor-card-image"
+                    />
                   </div>
                 </div>
               ))}
@@ -663,36 +792,53 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
             </p>
           </div>
           
-          <div className="reveal overflow-x-auto">
-            <table className="w-full min-w-[600px] bg-white rounded-2xl shadow-md overflow-hidden">
-              <thead>
-                <tr className="bg-forest text-white">
-                  <th className="p-4 text-left font-medium">比較項目</th>
-                  <th className="p-4 text-center font-medium">トトノ</th>
-                  <th className="p-4 text-center font-medium">一般的な業者</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { item: "見積もり方法", us: "写真でOK / 現地無料", them: "現地のみ（有料の場合も）" },
-                  { item: "返信スピード", us: "12時間以内", them: "数日〜1週間" },
-                  { item: "最低依頼本数", us: "1本からOK", them: "複数本〜" },
-                  { item: "追加料金", us: "事前説明・了承制", them: "作業後に請求されることも" },
-                  { item: "近隣への配慮", us: "事前挨拶・養生徹底", them: "業者による" },
-                ].map((row, i) => (
-                  <tr key={i} className={i % 2 === 0 ? "bg-muted/30" : ""}>
-                    <td className="p-4 font-medium text-foreground">{row.item}</td>
-                    <td className="p-4 text-center">
-                      <span className="inline-flex items-center gap-1 text-forest font-medium">
+          <div className="reveal">
+            <div className="md:hidden space-y-3">
+              {comparisonRows.map((row, i) => (
+                <Card key={i} className="border-0 shadow-sm">
+                  <CardContent className="p-4 space-y-2">
+                    <p className="text-sm font-semibold text-foreground">{row.item}</p>
+                    <div className="rounded-lg bg-forest/5 px-3 py-2">
+                      <p className="text-xs text-muted-foreground mb-1">トトノ</p>
+                      <p className="text-sm font-medium text-forest inline-flex items-center gap-1">
                         <Check className="w-4 h-4" />
                         {row.us}
-                      </span>
-                    </td>
-                    <td className="p-4 text-center text-muted-foreground">{row.them}</td>
+                      </p>
+                    </div>
+                    <div className="rounded-lg bg-muted px-3 py-2">
+                      <p className="text-xs text-muted-foreground mb-1">一般的な業者</p>
+                      <p className="text-sm text-muted-foreground">{row.them}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full bg-white rounded-2xl shadow-md overflow-hidden">
+                <thead>
+                  <tr className="bg-forest text-white">
+                    <th className="p-4 text-left font-medium">比較項目</th>
+                    <th className="p-4 text-center font-medium">トトノ</th>
+                    <th className="p-4 text-center font-medium">一般的な業者</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {comparisonRows.map((row, i) => (
+                    <tr key={i} className={i % 2 === 0 ? "bg-muted/30" : ""}>
+                      <td className="p-4 font-medium text-foreground">{row.item}</td>
+                      <td className="p-4 text-center">
+                        <span className="inline-flex items-center gap-1 text-forest font-medium">
+                          <Check className="w-4 h-4" />
+                          {row.us}
+                        </span>
+                      </td>
+                      <td className="p-4 text-center text-muted-foreground">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
@@ -744,8 +890,15 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
           
           <div className="grid md:grid-cols-2 gap-6 reveal">
             <Card className="overflow-hidden border-0 shadow-md">
-              <div className="aspect-video">
-                <img src="/images/grass-cutting.jpg" alt="草刈りビフォーアフター" className="w-full h-full object-cover" />
+              <div className="relative aspect-video">
+                <Image
+                  src="/images/grass-cutting.jpg"
+                  alt="草刈りビフォーアフター"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  quality={72}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <CardContent className="p-6">
                 <h3 className="font-bold text-lg text-foreground mb-2">草刈り｜桜川市 S様邸</h3>
@@ -760,8 +913,15 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
             </Card>
             
             <Card className="overflow-hidden border-0 shadow-md">
-              <div className="aspect-video">
-                <img src="/images/before-after-garden.jpg" alt="庭木剪定ビフォーアフター" className="w-full h-full object-cover" />
+              <div className="relative aspect-video">
+                <Image
+                  src="/images/before-after-garden.jpg"
+                  alt="庭木剪定ビフォーアフター"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  quality={72}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <CardContent className="p-6">
                 <h3 className="font-bold text-lg text-foreground mb-2">庭木剪定｜筑西市 T様邸</h3>
@@ -776,8 +936,15 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
             </Card>
             
             <Card className="overflow-hidden border-0 shadow-md">
-              <div className="aspect-video">
-                <img src="/images/service-batsuboku.png" alt="伐採ビフォーアフター" className="w-full h-full object-cover" />
+              <div className="relative aspect-video">
+                <Image
+                  src="/images/service-batsuboku.png"
+                  alt="伐採ビフォーアフター"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  quality={72}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <CardContent className="p-6">
                 <h3 className="font-bold text-lg text-foreground mb-2">伐採・抹根｜下妻市 K様邸</h3>
@@ -792,8 +959,15 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
             </Card>
             
             <Card className="overflow-hidden border-0 shadow-md">
-              <div className="aspect-video">
-                <img src="/images/service-sentei.png" alt="松の剪定ビフォーアフター" className="w-full h-full object-cover" />
+              <div className="relative aspect-video">
+                <Image
+                  src="/images/service-sentei.png"
+                  alt="松の剪定ビフォーアフター"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  quality={72}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <CardContent className="p-6">
                 <h3 className="font-bold text-lg text-foreground mb-2">松の剪定｜古河市 M様邸</h3>
@@ -811,59 +985,7 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-12 md:py-20 bg-muted">
-        <div className="container">
-          <div className="reveal text-center mb-10">
-            <span className="badge bg-forest/10 text-forest mb-4">
-              <Star className="w-4 h-4" />
-              お客様の声
-            </span>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              ご利用いただいたお客様から
-            </h2>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-6 reveal">
-            {[
-              {
-                name: "K様（桜川市・60代）",
-                service: "庭木剪定",
-                comment: "LINEで写真を送っただけで、すぐに概算を教えてもらえて助かりました。当日の作業も丁寧で、仕上がりに大満足です。",
-              },
-              {
-                name: "M様（筑西市・50代）",
-                service: "草刈り・防草シート",
-                comment: "空き家になった実家の庭をお願いしました。遠方に住んでいるので、写真で報告してもらえるのがありがたいです。",
-              },
-              {
-                name: "S様（栃木市・70代）",
-                service: "伐採",
-                comment: "大きくなりすぎた木を3本伐採してもらいました。近所への挨拶もしてくれて、安心してお任せできました。",
-              },
-            ].map((item, i) => (
-              <Card key={i} className="border-0 shadow-md">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-1 mb-3">
-                    {[...Array(5)].map((_, j) => (
-                      <Star key={j} className="w-4 h-4 fill-coral text-coral" />
-                    ))}
-                  </div>
-                  <p className="text-sm text-foreground mb-4 leading-relaxed">「{item.comment}」</p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-forest/10 rounded-full flex items-center justify-center">
-                      <span className="text-forest font-bold">{item.name[0]}</span>
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground text-sm">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">{item.service}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Testimonials />
 
       {/* CTA Section */}
       <section className="py-12 md:py-20 bg-forest text-white">
@@ -873,38 +995,27 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
               まずはお気軽にご相談ください
             </h2>
             <p className="text-white/80 mb-8">
-              お見積もりは無料。LINEで写真を送るだけでも概算をお伝えできます。<br />
-              「こんなこと頼めるかな？」というご質問だけでもお気軽にどうぞ。
+              写真を送るだけで無料概算をご案内。お問い合わせには12時間以内に返信します。<br />
+              「この木1本だけ頼みたい」といったご相談も歓迎です。
             </p>
             
             <div className="grid sm:grid-cols-3 gap-4 mb-8">
-              <a 
-                href={`tel:${PHONE}`} 
-                className="cta-button bg-coral text-white flex flex-col items-center gap-2 py-6"
-                onClick={() => trackPhoneClick('cta_section')}
-              >
-                <Phone className="w-8 h-8" />
-                <span className="font-bold">電話で相談</span>
-                <span className="text-sm text-white/80">7:00〜20:00</span>
-              </a>
-              <a 
-                href={LINE_URL} 
-                className="cta-button bg-[#06C755] text-white flex flex-col items-center gap-2 py-6"
-                onClick={() => trackLineClick('cta_section')}
-              >
-                <MessageCircle className="w-8 h-8" />
-                <span className="font-bold">LINEで相談</span>
-                <span className="text-sm text-white/80">写真を送るだけ</span>
-              </a>
-              <a 
-                href={`mailto:${EMAIL}`} 
-                className="cta-button bg-white text-forest flex flex-col items-center gap-2 py-6"
-                onClick={() => trackEmailClick('cta_section')}
-              >
-                <Mail className="w-8 h-8" />
-                <span className="font-bold">メールで相談</span>
-                <span className="text-sm text-forest/70">24時間受付</span>
-              </a>
+              {contactChannels.map((channel) => {
+                const Icon = channel.icon;
+                const subLabelClassName = channel.id === "email" ? "text-sm text-forest/70" : "text-sm text-white/80";
+                return (
+                  <a
+                    key={channel.id}
+                    href={channel.href}
+                    className={channel.sectionClassName}
+                    onClick={() => trackContactClick(channel.id, "cta_section")}
+                  >
+                    <Icon className="w-8 h-8" />
+                    <span className="font-bold">{channel.label}</span>
+                    <span className={subLabelClassName}>{channel.subLabel}</span>
+                  </a>
+                );
+              })}
             </div>
             
             <div className="flex flex-wrap justify-center gap-4 text-sm text-white/80">
@@ -924,12 +1035,6 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
           </div>
         </div>
       </section>
-
-      {/* Price Simulator Section */}
-      <PriceSimulator />
-
-      {/* Testimonials Section */}
-      <Testimonials />
 
       {/* FAQ Section */}
       <section id="faq" className="py-12 md:py-20 bg-background">
@@ -974,16 +1079,28 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                   q: "支払い方法は？",
                   a: "現金またはお振込みでお願いしております。作業完了後、ご確認いただいてからのお支払いとなります。",
                 },
-              ].map((item, i) => (
-                <AccordionItem key={i} value={`item-${i}`} className="bg-white rounded-xl shadow-sm border-0 px-6">
-                  <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline py-5">
-                    {item.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground pb-5">
-                    {item.a}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
+              ].map((item, i) => {
+                const triggerId = `faq-trigger-${i}`;
+                const contentId = `faq-content-${i}`;
+                return (
+                  <AccordionItem key={i} value={`item-${i}`} className="bg-white rounded-xl shadow-sm border-0 px-6">
+                    <AccordionTrigger
+                      id={triggerId}
+                      aria-controls={contentId}
+                      className="text-left font-medium text-foreground hover:no-underline py-5"
+                    >
+                      {item.q}
+                    </AccordionTrigger>
+                    <AccordionContent
+                      id={contentId}
+                      aria-labelledby={triggerId}
+                      className="text-muted-foreground pb-5"
+                    >
+                      {item.a}
+                    </AccordionContent>
+                  </AccordionItem>
+                );
+              })}
             </Accordion>
           </div>
         </div>
@@ -1080,37 +1197,27 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
           </div>
         </div>
       </footer>
+      </main>
 
       {/* Floating CTA */}
       <div className={`floating-cta ${isFloatingCtaVisible ? "" : "hidden"}`}>
         <div className="container py-3">
           <div className="flex items-center justify-center gap-3">
-            <a 
-              href={`tel:${PHONE}`} 
-              className="flex-1 sm:flex-none cta-button bg-coral text-white text-sm py-3 px-4 flex items-center justify-center gap-2"
-              onClick={() => trackPhoneClick('floating_cta')}
-            >
-              <Phone className="w-4 h-4" />
-              <span className="hidden sm:inline">電話で相談</span>
-              <span className="sm:hidden">電話</span>
-            </a>
-            <a 
-              href={LINE_URL} 
-              className="flex-1 sm:flex-none cta-button bg-[#06C755] text-white text-sm py-3 px-4 flex items-center justify-center gap-2"
-              onClick={() => trackLineClick('floating_cta')}
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">LINEで相談</span>
-              <span className="sm:hidden">LINE</span>
-            </a>
-            <a 
-              href={`mailto:${EMAIL}`} 
-              className="hidden sm:flex flex-1 sm:flex-none cta-button bg-forest text-white text-sm py-3 px-4 items-center justify-center gap-2"
-              onClick={() => trackEmailClick('floating_cta')}
-            >
-              <Mail className="w-4 h-4" />
-              メール
-            </a>
+            {contactChannels.map((channel) => {
+              const Icon = channel.icon;
+              return (
+                <a
+                  key={channel.id}
+                  href={channel.href}
+                  className={channel.floatingClassName}
+                  onClick={() => trackContactClick(channel.id, "floating_cta")}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="hidden sm:inline">{channel.floatingLabelDesktop}</span>
+                  <span className="sm:hidden">{channel.floatingLabelMobile}</span>
+                </a>
+              );
+            })}
           </div>
         </div>
       </div>

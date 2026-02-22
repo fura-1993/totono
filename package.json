@@ -4,15 +4,14 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "vite --host",
-    "dev:reset": "lsof -ti tcp:3000 | xargs -r kill -9; rm -rf node_modules/.vite; vite --host 0.0.0.0 --port 3000 --strictPort",
+    "dev": "WATCHPACK_POLLING=true next dev -p 3000",
+    "dev:reset": "lsof -ti tcp:3000 | xargs -r kill -9; WATCHPACK_POLLING=true next dev -p 3000",
     "sync": "git add . && git commit -m \"sync\" || true && git push origin main",
     "generate-sitemap": "node scripts/generate-sitemap.mjs",
     "submit-sitemap": "node scripts/submit-sitemap.mjs",
-    "prebuild": "node scripts/generate-sitemap.mjs",
-    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "NODE_ENV=production node dist/index.js",
-    "preview": "vite preview --host",
+    "build": "node scripts/next-build.mjs",
+    "start": "next start -H 0.0.0.0 -p ${PORT:-3000}",
+    "preview": "next start -H 0.0.0.0 -p ${PORT:-3000}",
     "check": "tsc --noEmit",
     "format": "prettier --write .",
     "db:push": "drizzle-kit push"
@@ -61,6 +60,7 @@
     "multer": "^2.0.2",
     "mysql2": "^3.16.0",
     "nanoid": "^5.1.5",
+    "next": "^15.3.0",
     "next-themes": "^0.4.6",
     "nodemailer": "^7.0.12",
     "react": "^19.2.1",
@@ -78,6 +78,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.14",
     "@builder.io/vite-plugin-jsx-loc": "^0.1.1",
     "@tailwindcss/typography": "^0.5.15",
     "@tailwindcss/vite": "^4.1.3",

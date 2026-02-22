@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * ContactForm - MySQL連携のお問い合わせフォーム
  * 写真添付対応（最大10枚、1枚20MBまで）
@@ -5,7 +7,7 @@
  */
 
 import { useState, useRef, FormEvent } from "react";
-import { useLocation } from "wouter";
+import { useRouter } from "next/navigation";
 import { Camera, X, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -112,7 +114,7 @@ export function ContactForm() {
     fileInputRef.current?.click();
   };
 
-  const [, setLocation] = useLocation();
+  const router = useRouter();
   const { getUtmParamsForForm, getUtmSummary } = useUtmParams();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -125,8 +127,15 @@ export function ContactForm() {
       // UTMパラメータを取得
       const utmParams = getUtmParamsForForm();
       
-      // サービスタイプを取得
-      const serviceTypes = formData.getAll('service').join(', ');
+      // 問い合わせ内容を構造化
+      const selectedServices = formData
+        .getAll("service")
+        .map((value) => String(value).trim())
+        .filter(Boolean);
+      const serviceTypes = selectedServices.join(", ");
+      const details = String(formData.get("details") || "").trim();
+      const timing = String(formData.get("timing") || "").trim();
+      const contactMethod = String(formData.get("contact_method") || "").trim();
       
       // FormDataを作成（写真を含む）
       const submitData = new FormData();
@@ -135,7 +144,14 @@ export function ContactForm() {
       submitData.append('phone', formData.get('phone') as string || '');
       submitData.append('address', formData.get('address') as string || '');
       submitData.append('serviceType', serviceTypes || '');
-      submitData.append('message', `【ご依頼内容】${serviceTypes}\n【詳細】${formData.get('details') || 'なし'}\n【希望時期】${formData.get('timing') || '未選択'}\n【連絡方法】${formData.get('contact_method') || '未選択'}`);
+      submitData.append("services", JSON.stringify(selectedServices));
+      submitData.append("details", details);
+      submitData.append("timing", timing);
+      submitData.append("contactMethod", contactMethod);
+      submitData.append(
+        "message",
+        `【ご依頼内容】${serviceTypes || "未選択"}\n【詳細】${details || "なし"}\n【希望時期】${timing || "未選択"}\n【連絡方法】${contactMethod || "未選択"}`
+      );
       submitData.append('utmParams', JSON.stringify(utmParams));
       submitData.append('trafficSource', getUtmSummary());
       submitData.append('landingPage', window.location.href);
@@ -175,7 +191,7 @@ export function ContactForm() {
         
         // 2秒後にサンクスページへリダイレクト
         setTimeout(() => {
-          setLocation("/thanks");
+          router.push("/thanks");
         }, 2000);
         return;
       } else {
@@ -378,13 +394,14 @@ export function ContactForm() {
                   ) : (
                     <img
                       src={file.preview}
-                      alt="Preview"
+                      alt={`${file.file.name} のプレビュー`}
                       className="w-full h-full object-cover"
                     />
                   )}
                   <button
                     type="button"
                     onClick={() => removeFile(file.id)}
+                    aria-label={`${file.file.name} を削除`}
                     className="absolute top-1 right-1 w-5 h-5 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70 transition-colors"
                   >
                     <X className="w-3 h-3" />
