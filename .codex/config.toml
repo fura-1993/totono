@@ -1,0 +1,31 @@
+# メイン（親）エージェント。普段は high で十分
+model_reasoning_effort = "high"
+
+[features]
+multi_agent = true
+
+
+[agents]
+max_threads = 4
+
+# 速く全体把握する役（read-only）
+[agents.explorer]
+description = "Read-only explorer for project structure and LP sections."
+config_file = "agents/explorer.toml"
+
+# UIレビュー役
+[agents.ui_reviewer]
+description = "Reviews LP UI/UX, visual hierarchy, spacing, CTA visibility, and mobile UX."
+config_file = "agents/ui_reviewer.toml"
+
+# コピー/訴求レビュー役
+[agents.copy_reviewer]
+description = "Reviews LP headlines, CTA copy, clarity, and conversion messaging."
+config_file = "agents/copy_reviewer.toml"
+
+# パフォーマンスレビュー役
+[agents.perf_reviewer]
+description = "Reviews frontend performance risks for the LP."
+config_file = "agents/perf_reviewer.toml"
+
+

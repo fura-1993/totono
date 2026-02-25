@@ -8,7 +8,7 @@
  * - アニメーション: 軽量なtransform/opacityベース
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Phone, MessageCircle, Mail, Check, ChevronRight, Clock, MapPin, Shield, Sparkles, TreeDeciduous, Scissors, Leaf, Home as HomeIcon, Building, Mountain, AlertTriangle, Menu, X, type LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -62,6 +62,8 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
   const [isFloatingCtaVisible, setIsFloatingCtaVisible] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
+  const heroHeadlineRef = useRef<HTMLHeadingElement>(null);
+  const heroHeadlineSecondaryRef = useRef<HTMLSpanElement>(null);
 
   // Scroll reveal effect
   useEffect(() => {
@@ -92,6 +94,64 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Keep the second headline segment on one line while fitting the card width.
+  useLayoutEffect(() => {
+    const headingEl = heroHeadlineRef.current;
+    const secondaryEl = heroHeadlineSecondaryRef.current;
+
+    if (!headingEl || !secondaryEl || typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    const minFontPx = 12;
+
+    const fitSecondaryText = () => {
+      const headingFontPx = Number.parseFloat(window.getComputedStyle(headingEl).fontSize) || 24;
+      const maxFontPx = Math.max(headingFontPx, 24);
+      secondaryEl.style.fontSize = `${maxFontPx}px`;
+
+      const availableWidth = headingEl.clientWidth;
+      if (availableWidth <= 0) {
+        secondaryEl.style.fontSize = `${minFontPx}px`;
+        return;
+      }
+
+      const secondaryWidth = secondaryEl.scrollWidth;
+      if (secondaryWidth <= availableWidth) {
+        return;
+      }
+
+      const fittedFontSize = Math.max(
+        minFontPx,
+        Math.min(maxFontPx, maxFontPx * (availableWidth / secondaryWidth))
+      );
+      secondaryEl.style.fontSize = `${fittedFontSize}px`;
+    };
+
+    let rafId = 0;
+    const scheduleFit = () => {
+      cancelAnimationFrame(rafId);
+      rafId = window.requestAnimationFrame(fitSecondaryText);
+    };
+
+    scheduleFit();
+
+    const observer = new ResizeObserver(scheduleFit);
+    observer.observe(headingEl);
+    observer.observe(secondaryEl);
+    window.addEventListener("resize", scheduleFit, { passive: true });
+
+    if ("fonts" in document) {
+      void document.fonts.ready.then(scheduleFit).catch(() => undefined);
+    }
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      observer.disconnect();
+      window.removeEventListener("resize", scheduleFit);
+    };
   }, []);
 
   const comparisonRows = [
@@ -244,18 +304,16 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                 <MapPin className="hero-meta-icon" />
                 茨城・栃木・千葉対応
               </span>
-              <span className="hero-meta-badge hero-meta-badge-accent">
-                <Clock className="hero-meta-icon" />
-                12時間以内返信
-              </span>
             </div>
             
             {/* Main headline */}
-            <h1 className="text-[clamp(1.5rem,4.8vw,3rem)] font-semibold tracking-tight text-white leading-[1.22] mb-3 animate-fade-in-up stagger-1">
+            <h1 ref={heroHeadlineRef} className="text-[clamp(1.5rem,4.8vw,3rem)] font-semibold tracking-tight text-white leading-[1.22] mb-3 animate-fade-in-up stagger-1">
               <span className="inline-flex items-center rounded-md border border-white/24 bg-black/30 px-2.5 py-1 text-[#f3dcc7] [text-shadow:0_2px_10px_rgba(0,0,0,0.35)]">
                 剪定・伐採・草刈り
               </span>
-              <span className="block mt-1">写真で無料概算、12時間以内に返信</span>
+              <span ref={heroHeadlineSecondaryRef} className="block mt-1 whitespace-nowrap leading-tight">
+                写真で無料概算、12時間以内に返信
+              </span>
             </h1>
             
             <p className="text-[clamp(0.84rem,2.25vw,1.1rem)] leading-relaxed text-white/95 mb-4 animate-fade-in-up stagger-2">

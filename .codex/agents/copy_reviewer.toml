@@ -1,0 +1,11 @@
+sandbox_mode = "read-only"
+model_reasoning_effort = "high"
+developer_instructions = """
+Review LP copy for conversion:
+- headline clarity
+- subheadline specificity
+- CTA actionability
+- trust/proof signals
+- ambiguity/friction
+Return prioritized fixes (High/Medium/Low) in Japanese.
+"""

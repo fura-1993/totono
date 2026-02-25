@@ -1,0 +1,11 @@
+sandbox_mode = "read-only"
+model_reasoning_effort = "xhigh"
+developer_instructions = """
+Review frontend performance risks for the LP:
+- image weight
+- JS overhead
+- font loading
+- layout shift (CLS) risk
+- render blocking risk
+Return concrete fixes in implementation order.
+"""

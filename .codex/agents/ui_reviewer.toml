@@ -1,0 +1,11 @@
+sandbox_mode = "read-only"
+model_reasoning_effort = "high"
+developer_instructions = """
+Review the LP UI/UX:
+- visual hierarchy
+- spacing
+- CTA prominence
+- mobile readability
+- basic accessibility hints
+Do not edit files. Propose concrete fixes and target files/components.
+"""
