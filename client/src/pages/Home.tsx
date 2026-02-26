@@ -10,7 +10,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Phone, MessageCircle, Mail, Check, ChevronRight, Clock, MapPin, Shield, Sparkles, TreeDeciduous, Scissors, Leaf, Home as HomeIcon, Building, Mountain, AlertTriangle, Menu, X, type LucideIcon } from "lucide-react";
+import { Phone, MessageCircle, Mail, Check, ChevronRight, Clock, MapPin, Shield, Sparkles, TreeDeciduous, Scissors, Leaf, Home as HomeIcon, Building, Mountain, AlertTriangle, type LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ContactForm } from "@/components/ContactForm";
@@ -94,6 +94,45 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 768) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   // Keep the second headline segment on one line while fitting the card width.
@@ -246,38 +285,47 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
           </nav>
           
           {/* Mobile menu button */}
-          <button 
+          <button
             type="button"
-            className="md:hidden p-2 rounded-lg border border-white/20 bg-white/10 text-white"
+            className={`mobile-menu-toggle md:hidden ${mobileMenuOpen ? "is-open" : ""}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? "メニューを閉じる" : "メニューを開く"}
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-navigation"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <span className="sr-only">{mobileMenuOpen ? "メニューを閉じる" : "メニューを開く"}</span>
+            <span className="mobile-menu-toggle-bar" aria-hidden="true" />
+            <span className="mobile-menu-toggle-bar" aria-hidden="true" />
+            <span className="mobile-menu-toggle-bar" aria-hidden="true" />
           </button>
         </div>
-        
+
         {/* Mobile menu */}
-        {mobileMenuOpen && (
-          <div
-            id="mobile-navigation"
-            className="md:hidden bg-charcoal/80 border-t border-white/15 py-4 backdrop-blur-md"
-          >
-            <nav className="container flex flex-col gap-4" aria-label="モバイルナビゲーション">
+        <div className={`mobile-menu-layer md:hidden ${mobileMenuOpen ? "is-open" : ""}`} aria-hidden={!mobileMenuOpen}>
+          <button
+            type="button"
+            className="mobile-menu-scrim"
+            aria-label="メニューを閉じる"
+            tabIndex={mobileMenuOpen ? 0 : -1}
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div id="mobile-navigation" className="mobile-menu-panel">
+            <nav className="container flex flex-col gap-1 py-3" aria-label="モバイルナビゲーション">
               {GLOBAL_NAV_ITEMS.map((item) => (
                 <a
                   key={item.href}
                   href={item.href}
-                  className="text-sm font-medium py-2 text-white/90"
+                  className="mobile-menu-link"
+                  tabIndex={mobileMenuOpen ? 0 : -1}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {item.label}
+                  <span>{item.label}</span>
+                  <ChevronRight className="h-4 w-4 text-white/55" aria-hidden="true" />
                 </a>
               ))}
             </nav>
           </div>
-        )}
+        </div>
       </header>
 
       <main id="main-content">
