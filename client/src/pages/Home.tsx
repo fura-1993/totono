@@ -388,18 +388,18 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
             </div>
             
             {/* Trust badges */}
-            <div className="hero-trust-row mb-6 animate-fade-in-up stagger-3">
+            <div className="hero-trust-row mb-3 md:mb-6 animate-fade-in-up stagger-3">
               <div className="hero-trust-item">
                 <Check className="hero-trust-icon" />
-                <span className="hero-trust-text">見積書で内訳提示</span>
+                <span className="hero-trust-text">内訳明瞭</span>
               </div>
               <div className="hero-trust-item">
                 <Check className="hero-trust-icon" />
-                <span className="hero-trust-text">12時間以内返信</span>
+                <span className="hero-trust-text">12h返信</span>
               </div>
               <div className="hero-trust-item">
                 <Check className="hero-trust-icon" />
-                <span className="hero-trust-text">追加は事前了承制</span>
+                <span className="hero-trust-text">追加前確認</span>
               </div>
             </div>
             
