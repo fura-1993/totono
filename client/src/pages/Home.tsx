@@ -208,7 +208,7 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
       icon: Phone,
       label: "電話で無料相談",
       subLabel: "7:00〜20:00",
-      floatingLabelDesktop: "電話で無料相談",
+      floatingLabelDesktop: PHONE,
       floatingLabelMobile: "電話相談",
       sectionClassName: "cta-button bg-coral text-white flex flex-col items-center gap-2 py-6",
       floatingClassName: "flex-1 sm:flex-none cta-button bg-coral text-white text-sm py-3 px-4 flex items-center justify-center gap-2",
@@ -274,20 +274,16 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                 {item.label}
               </a>
             ))}
-            <a 
-              href={`tel:${PHONE}`} 
-              className="hero-header-cta"
-              onClick={() => trackPhoneClick('header')}
-            >
+            <div className="hero-header-cta" aria-label={`電話番号 ${PHONE}`}>
               <Phone className="w-4 h-4 inline mr-1" />
-              電話で相談
-            </a>
+              {PHONE}
+            </div>
           </nav>
           
           {/* Mobile menu button */}
           <button
             type="button"
-            className={`mobile-menu-toggle md:hidden ${mobileMenuOpen ? "is-open" : ""}`}
+            className={`mobile-menu-toggle inline-flex md:hidden ${mobileMenuOpen ? "is-open" : ""}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? "メニューを閉じる" : "メニューを開く"}
             aria-expanded={mobileMenuOpen}
@@ -411,7 +407,8 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                 onClick={() => trackPhoneClick('hero')}
               >
                 <Phone className="w-5 h-5" />
-                <span>電話で無料相談する</span>
+                <span className="hidden sm:inline">{PHONE}</span>
+                <span className="sm:hidden">電話で無料相談する</span>
               </a>
               <a 
                 href={LINE_URL} 
@@ -1117,7 +1114,14 @@ export default function Home({ achievements = [] }: { achievements?: HomeAchieve
                     onClick={() => trackContactClick(channel.id, "cta_section")}
                   >
                     <Icon className="w-8 h-8" />
-                    <span className="font-bold">{channel.label}</span>
+                    {channel.id === "phone" ? (
+                      <span className="font-bold">
+                        <span className="hidden sm:inline">{PHONE}</span>
+                        <span className="sm:hidden">{channel.label}</span>
+                      </span>
+                    ) : (
+                      <span className="font-bold">{channel.label}</span>
+                    )}
                     <span className={subLabelClassName}>{channel.subLabel}</span>
                   </a>
                 );
